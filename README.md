@@ -58,6 +58,4 @@ docker run -p 8080:8080 books-api
 Simply connect your GitHub repository to **Render** and apply the `render.yaml` blueprint. The service will automatically build via the `Dockerfile` and go live on your custom subdomain.
 
 ---
-
-### License
-Open-source under the MIT License. Built for high-performance discovery.
+Built for high-performance discovery.
