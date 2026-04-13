@@ -14,18 +14,3 @@ public class Book {
     private String coverUrl;
     private String description;
 }
-
-// src/main/java/com/example/booksapi/model/BookResponse.java
-package com.example.booksapi.model;
-
-import lombok.Data;
-import java.util.List;
-
-@Data
-public class BookResponse {
-    private List<Book> books;
-    private int page;
-    private int size;
-    private long totalElements;
-    private int totalPages;
-}
