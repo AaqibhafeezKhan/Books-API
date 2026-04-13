@@ -1,6 +1,6 @@
 # / BooksAPI
 
-> 🚀 A high-performance Spring Boot 3 microservice for book discovery. Features a minimalistic developer playground with live `curl` execution, syntax-highlighted JSON responses, and production-ready Docker deployment.
+> A high-performance Spring Boot 3 microservice for book discovery. Features a minimalistic developer playground with live `curl` execution, syntax-highlighted JSON responses, and production-ready Docker deployment.
 
 ---
 
@@ -28,16 +28,19 @@
 The service exposes a primary search endpoint with pagination support.
 
 #### Search Query
+
 ```bash
 curl -X GET "https://books-api.render.com/api/books/search?query=dune"
 ```
 
 #### Filtered Search
+
 ```bash
 curl -X GET "https://books-api.render.com/api/books/search?filterType=author&filterValue=Frank+Herbert"
 ```
 
 **Parameters:**
+
 - `query`: General search string.
 - `filterType`: One of `author`, `subject`, `isbn`.
 - `filterValue`: Specific value for the filter.
@@ -49,13 +52,16 @@ curl -X GET "https://books-api.render.com/api/books/search?filterType=author&fil
 ### Deployment
 
 #### Local (Docker)
+
 ```bash
 docker build -t books-api .
 docker run -p 8080:8080 books-api
 ```
 
 #### Render / Koyeb
+
 Simply connect your GitHub repository to **Render** and apply the `render.yaml` blueprint. The service will automatically build via the `Dockerfile` and go live on your custom subdomain.
 
 ---
+
 Built for high-performance discovery.
