@@ -27,16 +27,18 @@
 
 The service exposes a primary search endpoint with pagination support.
 
-#### Search Query
+> **Note**: The URLs below are examples. Replace `localhost:8080` with your actual deployment URL.
+
+#### Search Query Example
 
 ```bash
-curl -X GET "https://books-api.render.com/api/books/search?query=dune"
+curl -X GET "http://localhost:8080/api/books/search?query=dune"
 ```
 
-#### Filtered Search
+#### Filtered Search Example
 
 ```bash
-curl -X GET "https://books-api.render.com/api/books/search?filterType=author&filterValue=Frank+Herbert"
+curl -X GET "http://localhost:8080/api/books/search?filterType=author&filterValue=Frank+Herbert"
 ```
 
 **Parameters:**
