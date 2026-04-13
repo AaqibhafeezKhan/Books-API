@@ -1,127 +1,63 @@
-# Spring Boot Books API
+# / BooksAPI
 
-This project is a RESTful API that integrates with the Open Library API to provide book search and filtering capabilities. It's completely free to use and requires no API key setup.
+> 🚀 A high-performance Spring Boot 3 microservice for book discovery. Features a minimalistic developer playground with live `curl` execution, syntax-highlighted JSON responses, and production-ready Docker deployment.
 
-## Prerequisites
+---
 
-- Java 17 or higher
-- Maven
+### Core Features
 
-## Setup
+- **Minimalist API Showcase**: Integrated live-demo UI designed for developers.
+- **Real-time Discovery**: High-speed wrapper for the Open Library API.
+- **Deep Filtering**: Search by Title, Author, Subject, or ISBN.
+- **Zero-Config**: Completely public endpoints with no API key required.
+- **Production Ready**: Optimized multi-stage Docker builds and Render/Koyeb blueprints.
 
-1. Clone the repository:
+---
+
+### Tech Stack
+
+- **Backend**: Java 17, Spring Boot 3.2.0
+- **Documentation**: OpenAPI 3 / Swagger UI
+- **DevOps**: Docker (Alpine JRE), GitHub Actions, Render
+- **Frontend**: Vanilla JS (ES6+), CSS Mesh Gradients, JetBrains Mono Typography
+
+---
+
+### API Usage
+
+The service exposes a primary search endpoint with pagination support.
+
+#### Search Query
 ```bash
-git clone https://github.com/AaqibhafeezKhan/Books-API.git
-cd books-api
+curl -X GET "https://books-api.render.com/api/books/search?query=dune"
 ```
 
-2. Build the project:
+#### Filtered Search
 ```bash
-./mvnw clean install
+curl -X GET "https://books-api.render.com/api/books/search?filterType=author&filterValue=Frank+Herbert"
 ```
 
-3. Run the application:
+**Parameters:**
+- `query`: General search string.
+- `filterType`: One of `author`, `subject`, `isbn`.
+- `filterValue`: Specific value for the filter.
+- `page` (default `0`): Page index.
+- `size` (default `10`): Page size.
+
+---
+
+### Deployment
+
+#### Local (Docker)
 ```bash
-java -jar target/books-api-1.0.0.jar
+docker build -t books-api .
+docker run -p 8080:8080 books-api
 ```
 
-The API will be available at `http://localhost:8080`
+#### Render / Koyeb
+Simply connect your GitHub repository to **Render** and apply the `render.yaml` blueprint. The service will automatically build via the `Dockerfile` and go live on your custom subdomain.
 
-## API Endpoints
+---
 
-### Search Books
-```
-GET /api/books/search
-```
-
-Query Parameters:
-- `query` (optional): General search term
-- `filterType` (optional): Type of filter (author, subject, isbn)
-- `filterValue` (optional): Value to filter by
-- `page` (optional, default: 0): Page number
-- `size` (optional, default: 10): Results per page
-
-Example requests:
-```bash
-# General search
-curl "http://localhost:8080/api/books/search?query=harry+potter"
-
-# Search by author
-curl "http://localhost:8080/api/books/search?filterType=author&filterValue=tolkien"
-
-# Search by subject/genre
-curl "http://localhost:8080/api/books/search?filterType=subject&filterValue=fantasy"
-
-# Search with pagination
-curl "http://localhost:8080/api/books/search?query=programming&page=1&size=20"
-```
-
-## Response Format
-
-```json
-{
-  "books": [
-    {
-      "key": "string",
-      "title": "string",
-      "authors": ["string"],
-      "publishYear": "string",
-      "subjects": ["string"],
-      "isbn": "string",
-      "coverUrl": "string",
-      "description": "string"
-    }
-  ],
-  "page": 0,
-  "size": 10,
-  "totalElements": 0,
-  "totalPages": 0
-}
-```
-
-## Deployment to Railway
-
-1. Create a Railway account at [railway.app](https://railway.app)
-
-2. Install Railway CLI:
-```bash
-npm i -g @railway/cli
-```
-
-3. Login to Railway:
-```bash
-railway login
-```
-
-4. Initialize Railway project:
-```bash
-railway init
-```
-
-5. Deploy the application:
-```bash
-railway up
-```
-
-Railway will automatically:
-- Detect the Java project
-- Use the build command: `./mvnw clean install`
-- Use the start command: `java -jar target/books-api-1.0.0.jar`
-- Provide a public URL for your API
-
-## Error Handling
-
-The API includes error handling for:
-- Invalid input parameters
-- External API failures
-- Internal server errors
-
-Error responses include appropriate HTTP status codes and descriptive messages.
-
-## Development Notes
-
-- The project uses Spring Boot 3.2.0
-- Integration with Open Library API (no API key required)
-- Pagination support
-- Filtering by author, subject, or ISBN
-- Cover images from Open Library's cover service
+### License
+Open-source under the MIT License. Built for high-performance discovery.
