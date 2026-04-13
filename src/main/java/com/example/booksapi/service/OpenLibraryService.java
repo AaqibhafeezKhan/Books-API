@@ -30,7 +30,7 @@ public class OpenLibraryService {
                                 int page, int size) {
         UriComponentsBuilder builder = UriComponentsBuilder
             .fromHttpUrl(OPEN_LIBRARY_API_URL)
-            .queryParam("page", page + 1) // Open Library uses 1-based pagination
+            .queryParam("page", page + 1) 
             .queryParam("limit", size);
 
         if (filterType != null && filterValue != null) {
@@ -85,7 +85,6 @@ public class OpenLibraryService {
                     book.setIsbn(doc.get("isbn").get(0).asText());
                 }
                 
-                // Set cover URL if available
                 if (doc.has("cover_i")) {
                     String coverId = doc.get("cover_i").asText();
                     book.setCoverUrl("https://covers.openlibrary.org/b/id/" + coverId + "-L.jpg");

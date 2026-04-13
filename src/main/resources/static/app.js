@@ -1,97 +1,113 @@
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
-    const filterTypeSelect = document.getElementById('filterType');
+    const filterType = document.getElementById('filterType');
     const searchBtn = document.getElementById('searchBtn');
+    const curlCommand = document.getElementById('curlCommand');
+    const jsonResponse = document.getElementById('jsonResponse');
     const resultsSection = document.getElementById('results');
     const bookGrid = document.getElementById('bookGrid');
     const resultCount = document.getElementById('resultCount');
     const loader = document.getElementById('loader');
 
+    const updateCurl = () => {
+        const query = searchInput.value || '...';
+        const type = filterType.value;
+        const baseUrl = window.location.origin;
+        let url = `${baseUrl}/api/books/search?`;
+        
+        if (type === 'all') {
+            url += `query=${encodeURIComponent(query)}`;
+        } else {
+            url += `filterType=${type}&filterValue=${encodeURIComponent(query)}`;
+        }
+
+        curlCommand.innerHTML = `<span class="c-keyword">curl</span> -X GET \\\n  <span class="c-string">"${url}"</span>`;
+    };
+
     const searchBooks = async () => {
         const query = searchInput.value.trim();
-        const filterType = filterTypeSelect.value;
-        
         if (!query) return;
 
-        // Reset UI
-        resultsSection.classList.add('hidden');
         loader.classList.remove('hidden');
         searchBtn.disabled = true;
-        searchBtn.textContent = 'Searching...';
+        searchBtn.textContent = 'Executing...';
         
         try {
+            const type = filterType.value;
             let url = `/api/books/search?`;
-            if (filterType === 'all') {
-                url += `query=${encodeURIComponent(query)}`;
-            } else {
-                url += `filterType=${filterType}&filterValue=${encodeURIComponent(query)}`;
-            }
+            url += type === 'all' ? `query=${encodeURIComponent(query)}` : `filterType=${type}&filterValue=${encodeURIComponent(query)}`;
 
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Search failed');
-            
             const data = await response.json();
+            
+            jsonResponse.innerHTML = syntaxHighlight(data);
+            
             displayResults(data);
         } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while searching. Please try again.');
+            jsonResponse.innerHTML = `<span class="c-keyword">Error:</span> <span class="c-string">Failed to fetch data</span>`;
         } finally {
             loader.classList.add('hidden');
             searchBtn.disabled = false;
-            searchBtn.textContent = 'Deep Search';
+            searchBtn.textContent = 'Execute Request';
         }
+    };
+
+    const syntaxHighlight = (json) => {
+        if (typeof json !== 'string') {
+            json = JSON.stringify(json, null, 2);
+        }
+        return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+            let cls = 'c-number';
+            if (/^"/.test(match)) {
+                if (/:$/.test(match)) {
+                    cls = 'c-key';
+                } else {
+                    cls = 'c-string';
+                }
+            } else if (/true|false/.test(match)) {
+                cls = 'c-keyword';
+            } else if (/null/.test(match)) {
+                cls = 'c-keyword';
+            }
+            return `<span class="${cls}">${match}</span>`;
+        });
     };
 
     const displayResults = (data) => {
         bookGrid.innerHTML = '';
         resultsSection.classList.remove('hidden');
         
-        if (data.books.length === 0) {
-            resultCount.textContent = 'No books found';
+        if (!data.books || data.books.length === 0) {
+            resultCount.textContent = '// No results found in the database';
             return;
         }
 
-        resultCount.textContent = `Found ${data.totalElements} results`;
+        resultCount.textContent = `// Found ${data.totalElements} records`;
 
         data.books.forEach(book => {
-            const bookCard = document.createElement('div');
-            bookCard.className = 'book-card';
+            const card = document.createElement('div');
+            card.className = 'mini-card';
             
-            const authors = book.authors && book.authors.length > 0 
-                ? book.authors.join(', ') 
-                : 'Unknown Author';
-            
-            const tags = book.subjects && book.subjects.length > 0
-                ? book.subjects.slice(0, 3).map(s => `<span class="tag">${s}</span>`).join('')
-                : '';
+            const authors = book.authors && book.authors.length > 0 ? book.authors[0] : 'Unknown';
+            const cover = book.coverUrl || 'https://via.placeholder.com/200x300?text=No+Cover';
 
-            const coverUrl = book.coverUrl || 'https://via.placeholder.com/350x500?text=No+Cover';
-
-            bookCard.innerHTML = `
-                <div class="book-cover">
-                    <img src="${coverUrl}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/350x500?text=No+Cover'">
+            card.innerHTML = `
+                <div class="mini-thumb">
+                    <img src="${cover}" alt="${book.title}" onerror="this.src='https://via.placeholder.com/200x300?text=No+Cover'">
                 </div>
-                <div class="book-info">
-                    <h3 title="${book.title}">${book.title}</h3>
-                    <p class="author">${authors}</p>
-                    <div class="book-tags">
-                        ${tags}
-                    </div>
+                <div class="mini-content">
+                    <h4 title="${book.title}">${book.title}</h4>
+                    <p>${authors}</p>
                 </div>
             `;
-            
-            bookGrid.appendChild(bookCard);
+            bookGrid.appendChild(card);
         });
-
-        // Smooth scroll to results
-        resultsSection.scrollIntoView({ behavior: 'smooth' });
     };
 
+    searchInput.addEventListener('input', updateCurl);
+    filterType.addEventListener('change', updateCurl);
     searchBtn.addEventListener('click', searchBooks);
+    searchInput.addEventListener('keypress', (e) => e.key === 'Enter' && searchBooks());
     
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            searchBooks();
-        }
-    });
+    updateCurl();
 });
